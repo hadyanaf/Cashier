@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "711250547701",
+    "project_id": "miredo-taisi",
+    "storage_bucket": "miredo-taisi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711250547701:android:f6b17e3f09d2297bc846bc",
+        "android_client_info": {
+          "package_name": "com.miredo.cashier"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLVVtWnA5u5jZw4yPjNSg3Ow2Jqvm2Mek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
