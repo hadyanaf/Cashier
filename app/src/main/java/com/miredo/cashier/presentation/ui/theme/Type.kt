@@ -1,4 +1,4 @@
-package com.miredo.cashier.ui.theme
+package com.miredo.cashier.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
