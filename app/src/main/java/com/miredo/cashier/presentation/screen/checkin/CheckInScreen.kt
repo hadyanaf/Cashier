@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,15 +25,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.miredo.cashier.data.enums.Flavor
 import com.miredo.cashier.presentation.components.FlavorsInputRow
 import com.miredo.cashier.presentation.ui.theme.TextDefault
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckInScreen(modifier: Modifier = Modifier) {
+fun CheckInScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: CheckInViewModel = hiltViewModel()
+) {
     val todayDate by remember {
         mutableStateOf(
             LocalDate.now().format(
@@ -47,6 +54,63 @@ fun CheckInScreen(modifier: Modifier = Modifier) {
     var oil by remember { mutableStateOf("") }
     var flour by remember { mutableStateOf("") }
 
+    var display by remember {
+        mutableStateOf(Flavor.entries.associateWith { 0 })
+    }
+
+    var raw by remember {
+        mutableStateOf(Flavor.entries.associateWith { 0 })
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                CheckInViewModel.ViewEffect.NavigateBack -> navController.popBackStack()
+            }
+        }
+    }
+
+    CheckInScreenContent(
+        modifier = modifier,
+        todayDate = todayDate,
+        oil = oil,
+        flour = flour,
+        display = display,
+        raw = raw,
+        onOilChanged = { oil = it },
+        onFlourChanged = { flour = it },
+        onDisplayChanged = { flavor, count ->
+            display = display.toMutableMap().apply { put(flavor, count) }
+        },
+        onRawChanged = { flavor, count -> raw = raw.toMutableMap().apply { put(flavor, count) } },
+        onSaveClicked = {
+            saveButtonClicked(
+                oil = oil,
+                flour = flour,
+                display = display,
+                raw = raw,
+                viewModel = viewModel
+            )
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CheckInScreenContent(
+    modifier: Modifier = Modifier,
+    todayDate: String,
+    oil: String,
+    flour: String,
+    display: Map<Flavor, Int>,
+    raw: Map<Flavor, Int>,
+    onOilChanged: (String) -> Unit,
+    onFlourChanged: (String) -> Unit,
+    onDisplayChanged: (Flavor, Int) -> Unit,
+    onRawChanged: (Flavor, Int) -> Unit,
+    onSaveClicked: () -> Unit
+) {
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -59,7 +123,7 @@ fun CheckInScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
-                onClick = { saveButtonClicked() }
+                onClick = { onSaveClicked }
             ) {
                 Text("Simpan")
             }
@@ -100,7 +164,7 @@ fun CheckInScreen(modifier: Modifier = Modifier) {
                 color = TextDefault
             )
 
-            FlavorsInputRow(modifier = Modifier, list = listOf("Ori", "Spicy", "Chicken"))
+            FlavorsInputRow(modifier = Modifier, values = display, onValueChange = onDisplayChanged)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -110,7 +174,7 @@ fun CheckInScreen(modifier: Modifier = Modifier) {
                 color = TextDefault
             )
 
-            FlavorsInputRow(modifier = Modifier, list = listOf("Ori", "Spicy", "Chicken"))
+            FlavorsInputRow(modifier = Modifier, values = raw, onValueChange = onRawChanged)
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -124,7 +188,7 @@ fun CheckInScreen(modifier: Modifier = Modifier) {
                 value = oil,
                 onValueChange = {
                     val filtered = it.filter { char -> char.isDigit() }
-                    if (filtered.length <= 3) oil = filtered
+                    if (filtered.length <= 3) onOilChanged
                 },
                 label = { Text("Minyak") },
                 modifier = Modifier.fillMaxWidth(),
@@ -138,7 +202,7 @@ fun CheckInScreen(modifier: Modifier = Modifier) {
                 value = flour,
                 onValueChange = {
                     val filtered = it.filter { char -> char.isDigit() }
-                    if (filtered.length <= 3) flour = filtered
+                    if (filtered.length <= 3) onFlourChanged
                 },
                 label = { Text("Tepung") },
                 modifier = Modifier.fillMaxWidth(),
@@ -151,12 +215,37 @@ fun CheckInScreen(modifier: Modifier = Modifier) {
     }
 }
 
-private fun saveButtonClicked() {
-
+private fun saveButtonClicked(
+    oil: String,
+    flour: String,
+    display: Map<Flavor, Int>,
+    raw: Map<Flavor, Int>,
+    viewModel: CheckInViewModel
+) {
+    viewModel.onEvent(
+        CheckInViewModel.ViewEvent.OnButtonSaveClicked(
+            oil = oil,
+            flour = flour,
+            display = display,
+            raw = raw
+        )
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun CheckInScreenPreview() {
-    CheckInScreen(Modifier)
+    CheckInScreenContent(
+        modifier = Modifier,
+        todayDate = "Selasa, 22 September 2025",
+        oil = "",
+        flour = "",
+        display = Flavor.entries.associateWith { 0 },
+        raw = Flavor.entries.associateWith { 0 },
+        onOilChanged = {},
+        onFlourChanged = {},
+        onDisplayChanged = { _, _ -> },
+        onRawChanged = { _, _ -> },
+        onSaveClicked = {}
+    )
 }

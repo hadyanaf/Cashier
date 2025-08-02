@@ -1,12 +1,12 @@
 package com.miredo.cashier.presentation.screen.counter
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.miredo.cashier.domain.model.MenuItem
+import com.miredo.cashier.domain.model.MenuDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,16 +14,16 @@ import javax.inject.Inject
 @HiltViewModel
 class CounterViewModel @Inject constructor() : ViewModel() {
 
-    private val _state = mutableStateOf(
+    private val _state = MutableStateFlow(
         ViewState(
-            menuItems = listOf(
-                MenuItem(title = "Ori", price = 3000),
-                MenuItem(title = "Spicy", price = 3500),
-                MenuItem(title = "Chicken", price = 4000)
+            menuDetails = listOf(
+                MenuDetail(title = "Ori", price = 3000),
+                MenuDetail(title = "Spicy", price = 3500),
+                MenuDetail(title = "Chicken", price = 4000)
             )
         )
     )
-    val state: State<ViewState> = _state
+    val state: StateFlow<ViewState> = _state
 
     private val _effect = MutableSharedFlow<ViewEffect>()
     val effect = _effect.asSharedFlow()
@@ -31,15 +31,28 @@ class CounterViewModel @Inject constructor() : ViewModel() {
     fun onEvent(event: ViewEvent) {
         when (event) {
             is ViewEvent.OnCountChanged -> onCountChanged(event)
+            is ViewEvent.OnCashChanged -> onCashChanged(event)
             ViewEvent.OnSaveClicked -> onSaveClicked()
+            ViewEvent.OnCashClicked -> onCashClicked()
+            ViewEvent.OnQrisClicked -> onQrisClicked()
         }
     }
 
     private fun onCountChanged(event: ViewEvent.OnCountChanged) {
-        val updatedItems = _state.value.menuItems.map {
-            if (it.title == event.title) it.copy(count = event.count) else it
+        viewModelScope.launch {
+            val updatedItems = _state.value.menuDetails.map {
+                if (it.title == event.title) it.copy(count = event.count) else it
+            }
+            _state.value = _state.value.copy(menuDetails = updatedItems)
+            _effect.emit(ViewEffect.ShowTotal(updatedItems.sumOf { it.totalPrice }))
         }
-        _state.value = _state.value.copy(menuItems = updatedItems)
+    }
+
+    private fun onCashChanged(event: ViewEvent.OnCashChanged) {
+        viewModelScope.launch {
+            val change = event.cash - _state.value.menuDetails.sumOf { it.totalPrice }
+            _effect.emit(ViewEffect.CalculateChange(change))
+        }
     }
 
     private fun onSaveClicked() {
@@ -48,17 +61,35 @@ class CounterViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    private fun onCashClicked() {
+        viewModelScope.launch {
+            _effect.emit(ViewEffect.ShowCashLayout)
+        }
+    }
+
+    private fun onQrisClicked() {
+        viewModelScope.launch {
+            _effect.emit(ViewEffect.ShowQrisLayout)
+        }
+    }
 
     sealed interface ViewEvent {
         data class OnCountChanged(val title: String, val count: Int) : ViewEvent
+        data class OnCashChanged(val cash: Int) : ViewEvent
         data object OnSaveClicked : ViewEvent
+        data object OnCashClicked : ViewEvent
+        data object OnQrisClicked : ViewEvent
     }
 
     sealed interface ViewEffect {
+        data class ShowTotal(val total: Int) : ViewEffect
+        data class CalculateChange(val change: Int) : ViewEffect
         data object NavigateBack : ViewEffect
+        data object ShowCashLayout : ViewEffect
+        data object ShowQrisLayout : ViewEffect
     }
 
     data class ViewState(
-        val menuItems: List<MenuItem> = emptyList()
+        val menuDetails: List<MenuDetail> = emptyList()
     )
 }

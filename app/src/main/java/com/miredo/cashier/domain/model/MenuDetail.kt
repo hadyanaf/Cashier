@@ -1,6 +1,6 @@
 package com.miredo.cashier.domain.model
 
-data class MenuItem(
+data class MenuDetail(
     val title: String,
     val price: Int,
     val count: Int = 0

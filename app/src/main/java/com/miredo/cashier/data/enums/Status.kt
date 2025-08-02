@@ -1,4 +1,4 @@
-package com.miredo.cashier.data.model
+package com.miredo.cashier.data.enums
 
 import androidx.compose.ui.graphics.Color
 import com.miredo.cashier.presentation.ui.theme.BgCheckIn

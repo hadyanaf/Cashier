@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.miredo.cashier.data.model.Status
+import com.miredo.cashier.data.enums.Status
 
 @Composable
 fun StatusLabel(status: Status, modifier: Modifier) {
@@ -18,7 +18,7 @@ fun StatusLabel(status: Status, modifier: Modifier) {
     val textColor = status.textColor
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(bgColor)
             .padding(horizontal = 8.dp, vertical = 4.dp)
