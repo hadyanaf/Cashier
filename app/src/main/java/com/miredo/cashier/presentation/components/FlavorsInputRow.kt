@@ -17,7 +17,7 @@ import com.miredo.cashier.data.enums.Flavor
 @Composable
 fun FlavorsInputRow(
     modifier: Modifier,
-    values: Map<Flavor, Int>,
+    values: Map<Flavor, Int?>,
     onValueChange: (Flavor, Int) -> Unit
 ) {
     Row(
@@ -28,7 +28,7 @@ fun FlavorsInputRow(
     ) {
         Flavor.entries.forEach { flavor ->
             OutlinedTextField(
-                value = values[flavor]?.toString() ?: "",
+                value = values[flavor]?.takeIf { it != 0 }?.toString() ?: "",
                 onValueChange = {
                     val filtered = it.filter { char -> char.isDigit() }
                     if (filtered.length <= 3) {

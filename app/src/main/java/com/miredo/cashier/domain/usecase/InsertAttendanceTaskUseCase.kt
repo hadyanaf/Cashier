@@ -6,6 +6,13 @@ import javax.inject.Inject
 
 class InsertAttendanceTaskUseCase @Inject constructor(private val repository: Repository) {
     suspend operator fun invoke(date: String, task: AttendanceTask) {
-        repository.saveCheckInData(date,task)
+        val checkIn = task.checkIn?.copy(
+            displayStock = task.checkIn.displayStock.mapKeys { it.key },
+            rawStock = task.checkIn.rawStock.mapKeys { it.key }
+        )
+        val firestoreTask = task.copy(
+            checkIn = checkIn
+        )
+        repository.saveCheckInData(date, firestoreTask)
     }
 }

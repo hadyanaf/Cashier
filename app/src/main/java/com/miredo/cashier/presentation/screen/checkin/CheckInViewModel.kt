@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.miredo.cashier.data.enums.Flavor
+import com.miredo.cashier.data.enums.Ingredient
 import com.miredo.cashier.data.enums.Status
 import com.miredo.cashier.data.model.AttendanceTask
 import com.miredo.cashier.data.model.CheckData
@@ -31,16 +32,15 @@ class CheckInViewModel @Inject constructor(private val insertAttendanceTaskUseCa
         viewModelScope.launch {
             val date = LocalDate.now().toString()
             val ingredients = hashMapOf(
-                "oil" to (event.oil.toFloatOrNull() ?: 0f),
-                "flour" to (event.flour.toFloatOrNull() ?: 0f)
+                Ingredient.OIL.name to (event.oil.toFloatOrNull() ?: 0f),
+                Ingredient.FLOUR.name to (event.flour.toFloatOrNull() ?: 0f)
             )
 
             val checkData = CheckData(
                 timestamp = Timestamp.now(),
-                displayStock = event.display,
-                rawStock = event.raw,
+                displayStock = event.display.mapKeys { it.key.name },
+                rawStock = event.raw.mapKeys { it.key.name },
                 ingredients = ingredients
-
             )
 
             val attendanceTask = AttendanceTask(

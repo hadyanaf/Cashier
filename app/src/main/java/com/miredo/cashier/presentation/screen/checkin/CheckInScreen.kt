@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.miredo.cashier.data.enums.Flavor
+import com.miredo.cashier.data.enums.Ingredient
 import com.miredo.cashier.presentation.components.FlavorsInputRow
 import com.miredo.cashier.presentation.ui.theme.TextDefault
 import java.time.LocalDate
@@ -123,7 +124,7 @@ fun CheckInScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
-                onClick = { onSaveClicked }
+                onClick = { onSaveClicked() }
             ) {
                 Text("Simpan")
             }
@@ -188,9 +189,9 @@ fun CheckInScreenContent(
                 value = oil,
                 onValueChange = {
                     val filtered = it.filter { char -> char.isDigit() }
-                    if (filtered.length <= 3) onOilChanged
+                    if (filtered.length <= 3) onOilChanged(filtered)
                 },
-                label = { Text("Minyak") },
+                label = { Text(Ingredient.OIL.label) },
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = { Text("Botol (liter)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -202,9 +203,9 @@ fun CheckInScreenContent(
                 value = flour,
                 onValueChange = {
                     val filtered = it.filter { char -> char.isDigit() }
-                    if (filtered.length <= 3) onFlourChanged
+                    if (filtered.length <= 3) onFlourChanged(filtered)
                 },
-                label = { Text("Tepung") },
+                label = { Text(Ingredient.FLOUR.label) },
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = { Text("Plastik (500 gr)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
