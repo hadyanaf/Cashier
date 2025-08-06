@@ -55,10 +55,20 @@ class RemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun addSale(reportId: String, sale: Sale) {
-        firestore.collection("reports")
+        val collectionRef = firestore.collection("reports")
             .document(reportId)
             .collection("sales")
-            .add(sale) // Auto-generates a unique ID
-            .await()
+
+        if (sale.id.isNullOrEmpty()) {
+            // Auto-generate ID and insert new sale
+            val newDocRef = collectionRef.document() // generate ID
+            val saleWithId = sale.copy(id = newDocRef.id)
+            newDocRef.set(saleWithId).await()
+        } else {
+            // Update existing sale
+            collectionRef.document(sale.id)
+                .set(sale)
+                .await()
+        }
     }
 }

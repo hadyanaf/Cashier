@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.miredo.cashier.data.model.Screen
 import com.miredo.cashier.presentation.screen.checkin.CheckInScreen
 import com.miredo.cashier.presentation.screen.home.HomeScreen
+import com.miredo.cashier.presentation.screen.sale.SaleScreen
 import com.miredo.cashier.presentation.ui.theme.CashierTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,6 +43,10 @@ fun AppNavHost() {
 
         composable(Screen.CheckIn.route) {
             CheckInScreen(navController = navController)
+        }
+
+        composable(Screen.Sale.route) {
+            SaleScreen(navController = navController)
         }
     }
 }

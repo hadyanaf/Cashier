@@ -25,18 +25,20 @@ import com.miredo.cashier.presentation.components.ReportItem
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToCheckIn: () -> Unit,
+    onNavigateToSale: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val reports by viewModel.reports.collectAsState()
 
-    HomeScreenContent(modifier = modifier, reports = reports, onAddClicked = onNavigateToCheckIn)
+    HomeScreenContent(modifier = modifier, reports = reports, onAddClicked = onNavigateToCheckIn, onItemClicked = onNavigateToSale)
 }
 
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     reports: List<ReportAttendance> = emptyList(),
-    onAddClicked: () -> Unit
+    onAddClicked: () -> Unit,
+    onItemClicked: () -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier,
