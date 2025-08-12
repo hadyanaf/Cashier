@@ -1,5 +1,6 @@
 package com.miredo.cashier.presentation.screen.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,7 +31,12 @@ fun HomeScreen(
 ) {
     val reports by viewModel.reports.collectAsState()
 
-    HomeScreenContent(modifier = modifier, reports = reports, onAddClicked = onNavigateToCheckIn, onItemClicked = onNavigateToSale)
+    HomeScreenContent(
+        modifier = modifier,
+        reports = reports,
+        onAddClicked = onNavigateToCheckIn,
+        onItemClicked = onNavigateToSale
+    )
 }
 
 @Composable
@@ -38,7 +44,7 @@ fun HomeScreenContent(
     modifier: Modifier = Modifier,
     reports: List<ReportAttendance> = emptyList(),
     onAddClicked: () -> Unit,
-    onItemClicked: () -> Unit = {}
+    onItemClicked: (String) -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier,
@@ -57,7 +63,12 @@ fun HomeScreenContent(
         ) {
 
             items(reports) { report ->
-                ReportItem(date = report.date, status = report.status, modifier = Modifier)
+                ReportItem(
+                    date = report.date,
+                    status = report.status,
+                    modifier = Modifier.clickable {
+                        onItemClicked(report.id)
+                    })
             }
         }
     }
@@ -68,10 +79,12 @@ fun HomeScreenContent(
 private fun HomeScreenContentPreview() {
     val reports = listOf(
         ReportAttendance(
+            id = "1",
             status = Status.IN_PROGRESS,
             date = "Selasa, 22 September 2025"
         ),
         ReportAttendance(
+            id = "2",
             status = Status.CHECKED_IN,
             date = "Senin, 21 September 2025"
 

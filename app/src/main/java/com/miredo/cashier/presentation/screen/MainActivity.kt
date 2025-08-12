@@ -37,6 +37,9 @@ fun AppNavHost() {
             HomeScreen(
                 onNavigateToCheckIn = {
                     navController.navigate(Screen.CheckIn.route)
+                },
+                onNavigateToSale = {
+                    navController.navigate(Screen.Sale.route)
                 }
             )
         }
