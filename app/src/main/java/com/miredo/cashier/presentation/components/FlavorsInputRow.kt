@@ -28,7 +28,7 @@ fun FlavorsInputRow(
     ) {
         Flavor.entries.forEach { flavor ->
             OutlinedTextField(
-                value = values[flavor]?.takeIf { it != 0 }?.toString() ?: "",
+                value = values[flavor]?.takeIf { it != 0 }?.toString().orEmpty(),
                 onValueChange = {
                     val filtered = it.filter { char -> char.isDigit() }
                     if (filtered.length <= 3) {

@@ -54,6 +54,20 @@ class RemoteDataSourceImpl @Inject constructor(
             .await()
     }
 
+    override suspend fun getSale(reportId: String, saleId: String): Sale? {
+        return try {
+            firestore.collection("reports")
+                .document(reportId)
+                .collection("sales")
+                .document(saleId)
+                .get()
+                .await()
+                .toObject(Sale::class.java)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     override suspend fun addSale(reportId: String, sale: Sale) {
         val collectionRef = firestore.collection("reports")
             .document(reportId)
@@ -70,5 +84,23 @@ class RemoteDataSourceImpl @Inject constructor(
                 .set(sale)
                 .await()
         }
+    }
+
+    override suspend fun updateSale(reportId: String, saleId: String, sale: Sale) {
+        firestore.collection("reports")
+            .document(reportId)
+            .collection("sales")
+            .document(saleId)
+            .set(sale)
+            .await()
+    }
+
+    override suspend fun deleteSale(reportId: String, saleId: String) {
+        firestore.collection("reports")
+            .document(reportId)
+            .collection("sales")
+            .document(saleId)
+            .delete()
+            .await()
     }
 }

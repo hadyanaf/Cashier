@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,14 +27,21 @@ import com.miredo.cashier.presentation.ui.theme.TextDefault
 import com.miredo.cashier.util.toRupiah
 
 @Composable
-fun SaleItem(modifier: Modifier, totalPrice: Int, items: Map<String, Int>, paymentType: PaymentType, onClick: () -> Unit) {
+fun SaleItem(
+    modifier: Modifier,
+    totalPrice: Int,
+    items: Map<String, Int>,
+    paymentType: PaymentType?,
+    onClick: () -> Unit,
+    onDeleteClick: (() -> Unit)? = null
+) {
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 12.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        onClick = { onClick() }
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier
@@ -38,17 +49,36 @@ fun SaleItem(modifier: Modifier, totalPrice: Int, items: Map<String, Int>, payme
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = totalPrice.toRupiah(),
-                style = MaterialTheme.typography.titleMedium,
-                color = TextDefault,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(end = 8.dp)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = totalPrice.toRupiah(),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = TextDefault,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                
+                if (onDeleteClick != null) {
+                    IconButton(
+                        onClick = onDeleteClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Sale"
+                        )
+                    }
+                }
+            }
 
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 val itemsText = items.entries.joinToString(" | ") { "${it.key}: ${it.value}" }
 
                 Text(
@@ -63,7 +93,10 @@ fun SaleItem(modifier: Modifier, totalPrice: Int, items: Map<String, Int>, payme
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                PaymentTypeLabel(type = paymentType, modifier = Modifier.align(Alignment.CenterVertically))
+                PaymentTypeLabel(
+                    type = paymentType,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
             }
         }
     }
@@ -77,5 +110,7 @@ private fun SaleItemPreview() {
         items = mapOf("O" to 1, "S" to 1, "C" to 3),
         paymentType = PaymentType.QRIS,
         modifier = Modifier,
-        onClick = {})
+        onClick = {},
+        onDeleteClick = {}
+    )
 }

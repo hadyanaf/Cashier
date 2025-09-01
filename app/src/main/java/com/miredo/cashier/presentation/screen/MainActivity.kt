@@ -9,7 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.miredo.cashier.data.model.Screen
+import com.miredo.cashier.navigation.NavigationArgs
 import com.miredo.cashier.presentation.screen.checkin.CheckInScreen
+import com.miredo.cashier.presentation.screen.counter.CounterScreen
 import com.miredo.cashier.presentation.screen.home.HomeScreen
 import com.miredo.cashier.presentation.screen.sale.SaleScreen
 import com.miredo.cashier.presentation.ui.theme.CashierTheme
@@ -38,8 +40,8 @@ fun AppNavHost() {
                 onNavigateToCheckIn = {
                     navController.navigate(Screen.CheckIn.route)
                 },
-                onNavigateToSale = {
-                    navController.navigate(Screen.Sale.route)
+                onNavigateToSale = { reportId ->
+                    navController.navigate(Screen.Sale.createRoute(reportId))
                 }
             )
         }
@@ -48,8 +50,30 @@ fun AppNavHost() {
             CheckInScreen(navController = navController)
         }
 
-        composable(Screen.Sale.route) {
-            SaleScreen(navController = navController)
+        composable(Screen.Sale.route) { backStackEntry ->
+            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
+            SaleScreen(
+                reportId = reportId,
+                navController = navController
+            )
+        }
+        
+        composable(Screen.Counter.route) { backStackEntry ->
+            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
+            CounterScreen(
+                reportId = reportId,
+                navController = navController
+            )
+        }
+        
+        composable(Screen.CounterEdit.route) { backStackEntry ->
+            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
+            val saleId = backStackEntry.arguments?.getString(NavigationArgs.SALE_ID).orEmpty()
+            CounterScreen(
+                reportId = reportId,
+                saleId = saleId,
+                navController = navController
+            )
         }
     }
 }

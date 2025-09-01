@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.miredo.cashier.data.enums.PaymentType
 
 @Composable
-fun PaymentTypeLabel(type: PaymentType, modifier: Modifier) {
+fun PaymentTypeLabel(type: PaymentType?, modifier: Modifier) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -24,7 +24,7 @@ fun PaymentTypeLabel(type: PaymentType, modifier: Modifier) {
     ) {
         Text(
             style = MaterialTheme.typography.labelSmall,
-            text = type.label,
+            text = type?.label.orEmpty(),
             color = Color.White,
             modifier = modifier
         )

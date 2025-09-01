@@ -26,7 +26,7 @@ import com.miredo.cashier.presentation.components.ReportItem
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToCheckIn: () -> Unit,
-    onNavigateToSale: () -> Unit,
+    onNavigateToSale: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val reports by viewModel.reports.collectAsState()

@@ -19,8 +19,22 @@ class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDat
         data: AttendanceTask
     ) = remoteDataSource.saveCheckInData(id, data)
 
+    override suspend fun getSale(reportId: String, saleId: String): Sale? =
+        remoteDataSource.getSale(reportId, saleId)
+
     override suspend fun addSale(
         reportId: String,
         sale: Sale
     ) = remoteDataSource.addSale(reportId, sale)
+
+    override suspend fun updateSale(
+        reportId: String,
+        saleId: String,
+        sale: Sale
+    ) = remoteDataSource.updateSale(reportId, saleId, sale)
+
+    override suspend fun deleteSale(
+        reportId: String,
+        saleId: String
+    ) = remoteDataSource.deleteSale(reportId, saleId)
 }

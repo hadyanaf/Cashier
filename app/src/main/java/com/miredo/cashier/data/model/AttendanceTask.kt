@@ -10,6 +10,7 @@ data class AttendanceTask(
     val status: Status? = null
 ) {
     fun toReportAttendance() = ReportAttendance(
+        id = date,
         date = date,
         status = status ?: Status.IN_PROGRESS,
     )

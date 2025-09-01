@@ -14,8 +14,11 @@ data class Sale(
     val change: Int = 0
 ) {
     fun toDomain() = SaleDomain(
+        id = id.orEmpty(),
         paymentType = paymentType,
         items = items,
-        totalPrice = totalPrice
+        totalPrice = totalPrice,
+        cash = cash,
+        change = change
     )
 }
