@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.miredo.cashier.data.model.Screen
 import com.miredo.cashier.navigation.NavigationArgs
 import com.miredo.cashier.presentation.screen.checkin.CheckInScreen
+import com.miredo.cashier.presentation.screen.checkout.CheckoutScreen
 import com.miredo.cashier.presentation.screen.counter.CounterScreen
 import com.miredo.cashier.presentation.screen.home.HomeScreen
 import com.miredo.cashier.presentation.screen.sale.SaleScreen
@@ -72,6 +73,14 @@ fun AppNavHost() {
             CounterScreen(
                 reportId = reportId,
                 saleId = saleId,
+                navController = navController
+            )
+        }
+        
+        composable(Screen.CheckOut.route) { backStackEntry ->
+            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
+            CheckoutScreen(
+                reportId = reportId,
                 navController = navController
             )
         }

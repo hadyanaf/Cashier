@@ -10,8 +10,13 @@ class InsertAttendanceTaskUseCase @Inject constructor(private val repository: Re
             displayStock = task.checkIn.displayStock.mapKeys { it.key },
             rawStock = task.checkIn.rawStock.mapKeys { it.key }
         )
+        val checkOut = task.checkOut?.copy(
+            displayStock = task.checkOut.displayStock.mapKeys { it.key },
+            rawStock = task.checkOut.rawStock.mapKeys { it.key }
+        )
         val firestoreTask = task.copy(
-            checkIn = checkIn
+            checkIn = checkIn,
+            checkOut = checkOut
         )
         repository.saveCheckInData(date, firestoreTask)
     }

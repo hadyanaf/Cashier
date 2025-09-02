@@ -74,7 +74,7 @@ class SaleViewModel @Inject constructor(
 
     private fun onSaveAndContinueClicked() {
         viewModelScope.launch {
-            _effect.emit(ViewEffect.NavigateBack)
+            _effect.emit(ViewEffect.NavigateToCheckout(reportId = _state.value.reportId))
         }
     }
 
@@ -89,6 +89,7 @@ class SaleViewModel @Inject constructor(
     sealed interface ViewEffect {
         data object NavigateBack : ViewEffect
         data class NavigateToCounter(val reportId: String, val saleId: String?) : ViewEffect
+        data class NavigateToCheckout(val reportId: String) : ViewEffect
         data class ShowError(val message: String) : ViewEffect
     }
 

@@ -64,6 +64,10 @@ fun SaleScreen(
                     navController.navigate(route)
                 }
 
+                is SaleViewModel.ViewEffect.NavigateToCheckout -> {
+                    navController.navigate(Screen.CheckOut.createRoute(effect.reportId))
+                }
+
                 is SaleViewModel.ViewEffect.ShowError -> {
                     snackBarHostState.showSnackbar(effect.message)
                 }

@@ -5,6 +5,9 @@ import com.miredo.cashier.navigation.NavigationArgs
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object CheckIn: Screen("check_in")
+    object CheckOut: Screen("checkout/{${NavigationArgs.REPORT_ID}}") {
+        fun createRoute(reportId: String) = "checkout/$reportId"
+    }
     object Sale: Screen("sale/{${NavigationArgs.REPORT_ID}}") {
         fun createRoute(reportId: String) = "sale/$reportId"
     }

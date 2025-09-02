@@ -6,5 +6,6 @@ data class CheckData(
     val timestamp: Timestamp = Timestamp.now(),
     val displayStock: Map<String, Int> = emptyMap(),
     val rawStock: Map<String, Int> = emptyMap(),
-    val ingredients: Map<String, Float> = emptyMap()
+    val ingredients: Map<String, Float> = emptyMap(),
+    val additionalResources: Map<String, String> = emptyMap()
 )
