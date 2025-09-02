@@ -1,5 +1,7 @@
 package com.miredo.cashier.presentation.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -32,7 +35,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.miredo.cashier.presentation.ui.theme.TextCaption
 import com.miredo.cashier.presentation.ui.theme.TextDefault
 import com.miredo.cashier.util.toRupiah
 
@@ -64,23 +66,38 @@ fun TextCounter(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextDefault
+                color = TextDefault,
+                fontWeight = FontWeight.Medium
             )
 
             Text(
                 text = formatPrice(price),
                 style = MaterialTheme.typography.bodySmall,
-                color = TextCaption
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(
-                onClick = onDecrement, modifier = Modifier
+                onClick = onDecrement, 
+                modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
+                    .background(
+                        MaterialTheme.colorScheme.surface,
+                        CircleShape
+                    )
+                    .border(
+                        1.dp, 
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                        CircleShape
+                    )
             ) {
-                Icon(imageVector = Icons.Default.Remove, contentDescription = "Minus")
+                Icon(
+                    imageVector = Icons.Default.Remove, 
+                    contentDescription = "Kurang",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
 
             BasicTextField(
@@ -94,18 +111,40 @@ fun TextCounter(
                 },
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
-                    .widthIn(min = 36.dp, max = 36.dp),
-                textStyle = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center),
+                    .widthIn(min = 40.dp, max = 40.dp)
+                    .background(
+                        MaterialTheme.colorScheme.surface,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .border(
+                        1.dp,
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(vertical = 8.dp),
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Medium
+                ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             IconButton(
-                onClick = onIncrement, modifier = Modifier
+                onClick = onIncrement, 
+                modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
+                    .background(
+                        MaterialTheme.colorScheme.primary,
+                        CircleShape
+                    )
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Plus")
+                Icon(
+                    imageVector = Icons.Default.Add, 
+                    contentDescription = "Tambah",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
 
@@ -113,7 +152,7 @@ fun TextCounter(
             modifier = Modifier.width(90.dp),
             textAlign = TextAlign.End,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextDefault,
+            color = MaterialTheme.colorScheme.primary,
             text = total.toRupiah(),
             fontWeight = FontWeight.Bold
         )

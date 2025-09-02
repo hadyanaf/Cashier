@@ -5,16 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.miredo.cashier.data.model.Screen
-import com.miredo.cashier.navigation.NavigationArgs
-import com.miredo.cashier.presentation.screen.checkin.CheckInScreen
-import com.miredo.cashier.presentation.screen.checkout.CheckoutScreen
-import com.miredo.cashier.presentation.screen.counter.CounterScreen
-import com.miredo.cashier.presentation.screen.home.HomeScreen
-import com.miredo.cashier.presentation.screen.sale.SaleScreen
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import com.miredo.cashier.presentation.navigation.AuthAwareNavigation
+import com.miredo.cashier.presentation.ui.theme.BlueTertiary
 import com.miredo.cashier.presentation.ui.theme.CashierTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,64 +21,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CashierTheme {
-                AppNavHost()
+                SetSystemBarsColor()
+                AuthAwareNavigation()
             }
         }
     }
 }
 
 @Composable
-fun AppNavHost() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
-        composable(Screen.Home.route) {
-            HomeScreen(
-                onNavigateToCheckIn = {
-                    navController.navigate(Screen.CheckIn.route)
-                },
-                onNavigateToSale = { reportId ->
-                    navController.navigate(Screen.Sale.createRoute(reportId))
-                }
-            )
-        }
-
-        composable(Screen.CheckIn.route) {
-            CheckInScreen(navController = navController)
-        }
-
-        composable(Screen.Sale.route) { backStackEntry ->
-            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
-            SaleScreen(
-                reportId = reportId,
-                navController = navController
-            )
-        }
-        
-        composable(Screen.Counter.route) { backStackEntry ->
-            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
-            CounterScreen(
-                reportId = reportId,
-                navController = navController
-            )
-        }
-        
-        composable(Screen.CounterEdit.route) { backStackEntry ->
-            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
-            val saleId = backStackEntry.arguments?.getString(NavigationArgs.SALE_ID).orEmpty()
-            CounterScreen(
-                reportId = reportId,
-                saleId = saleId,
-                navController = navController
-            )
-        }
-        
-        composable(Screen.CheckOut.route) { backStackEntry ->
-            val reportId = backStackEntry.arguments?.getString(NavigationArgs.REPORT_ID).orEmpty()
-            CheckoutScreen(
-                reportId = reportId,
-                navController = navController
-            )
+private fun SetSystemBarsColor() {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as ComponentActivity).window
+            window.statusBarColor = BlueTertiary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 }

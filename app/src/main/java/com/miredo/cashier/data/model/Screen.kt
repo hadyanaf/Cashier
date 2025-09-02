@@ -3,6 +3,7 @@ package com.miredo.cashier.data.model
 import com.miredo.cashier.navigation.NavigationArgs
 
 sealed class Screen(val route: String) {
+    object Login : Screen("login")
     object Home : Screen("home")
     object CheckIn: Screen("check_in")
     object CheckOut: Screen("checkout/{${NavigationArgs.REPORT_ID}}") {

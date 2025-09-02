@@ -1,17 +1,22 @@
 package com.miredo.cashier.presentation.screen.checkin
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,8 +34,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.miredo.cashier.data.enums.Flavor
 import com.miredo.cashier.data.enums.Ingredient
+import com.miredo.cashier.presentation.animation.AnimationConstants
+import com.miredo.cashier.presentation.animation.FadeInAnimation
+import com.miredo.cashier.presentation.animation.SlideInAnimation
+import com.miredo.cashier.presentation.components.CustomButton
+import com.miredo.cashier.presentation.components.CustomTextField
 import com.miredo.cashier.presentation.components.FlavorsInputRow
+import com.miredo.cashier.presentation.components.GradientBackground
+import com.miredo.cashier.presentation.components.RoundedTopAppBar
+import com.miredo.cashier.presentation.ui.theme.BlueTertiary
 import com.miredo.cashier.presentation.ui.theme.TextDefault
+import com.miredo.cashier.presentation.ui.theme.White
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -78,6 +92,7 @@ fun CheckInScreen(
         flour = flour,
         display = display,
         raw = raw,
+        onNavigateBack = { navController.popBackStack() },
         onOilChanged = { oil = it },
         onFlourChanged = { flour = it },
         onDisplayChanged = { flavor, count ->
@@ -105,6 +120,7 @@ fun CheckInScreenContent(
     flour: String,
     display: Map<Flavor, Int>,
     raw: Map<Flavor, Int>,
+    onNavigateBack: () -> Unit,
     onOilChanged: (String) -> Unit,
     onFlourChanged: (String) -> Unit,
     onDisplayChanged: (Flavor, Int) -> Unit,
@@ -112,108 +128,161 @@ fun CheckInScreenContent(
     onSaveClicked: () -> Unit
 ) {
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = { Text("Check In") }
+    GradientBackground {
+        Column {
+            RoundedTopAppBar(
+                title = "Check In",
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Kembali",
+                            tint = White
+                        )
+                    }
+                }
             )
-        },
-        bottomBar = {
-            Button(
+            
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                onClick = { onSaveClicked() }
+                    .padding(top = 16.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Simpan")
+                // Date Card with animation
+                SlideInAnimation(visible = true) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp)
+                        ) {
+                            Text(
+                                style = MaterialTheme.typography.titleMedium,
+                                text = "Hari/Tanggal",
+                                color = TextDefault
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                style = MaterialTheme.typography.bodyLarge,
+                                text = todayDate,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+
+                // Stock Card with animation
+                FadeInAnimation(visible = true, delayMillis = AnimationConstants.DELAY_SHORT) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp)
+                        ) {
+                            Text(
+                                style = MaterialTheme.typography.titleMedium,
+                                text = "Stok Tahu",
+                                color = TextDefault
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text(
+                                style = MaterialTheme.typography.titleSmall,
+                                text = "Sisa display kemarin",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            FlavorsInputRow(
+                                modifier = Modifier,
+                                values = display,
+                                onValueChange = onDisplayChanged
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text(
+                                style = MaterialTheme.typography.titleSmall,
+                                text = "Mentah",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            FlavorsInputRow(
+                                modifier = Modifier,
+                                values = raw,
+                                onValueChange = onRawChanged
+                            )
+                        }
+                    }
+                }
+
+                // Raw Materials Card with animation
+                FadeInAnimation(visible = true, delayMillis = AnimationConstants.DELAY_MEDIUM) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(
+                                style = MaterialTheme.typography.titleMedium,
+                                text = "Bahan Baku",
+                                color = TextDefault
+                            )
+
+                            CustomTextField(
+                                value = oil,
+                                onValueChange = {
+                                    val filtered = it.filter { char -> char.isDigit() }
+                                    if (filtered.length <= 3) onOilChanged(filtered)
+                                },
+                                label = "${Ingredient.OIL.label} (Botol)"
+                            )
+
+                            CustomTextField(
+                                value = flour,
+                                onValueChange = {
+                                    val filtered = it.filter { char -> char.isDigit() }
+                                    if (filtered.length <= 3) onFlourChanged(filtered)
+                                },
+                                label = "${Ingredient.FLOUR.label} (Plastik 500gr)"
+                            )
+                        }
+                    }
+                }
+
+                // Save Button with animation
+                FadeInAnimation(visible = true, delayMillis = AnimationConstants.DELAY_LONG) {
+                    CustomButton(
+                        text = "Simpan",
+                        onClick = onSaveClicked,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp)
-                .verticalScroll(rememberScrollState())
-                .fillMaxWidth()
-        ) {
-            Text(
-                style = MaterialTheme.typography.titleMedium,
-                text = "Hari/Tanggal",
-                color = TextDefault
-            )
-
-            Text(
-                style = MaterialTheme.typography.bodyMedium,
-                text = todayDate,
-                color = TextDefault
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                style = MaterialTheme.typography.titleMedium,
-                text = "Stok Tahu",
-                color = TextDefault
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                style = MaterialTheme.typography.titleSmall,
-                text = "Sisa display kemarin",
-                color = TextDefault
-            )
-
-            FlavorsInputRow(modifier = Modifier, values = display, onValueChange = onDisplayChanged)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                style = MaterialTheme.typography.titleSmall,
-                text = "Mentah",
-                color = TextDefault
-            )
-
-            FlavorsInputRow(modifier = Modifier, values = raw, onValueChange = onRawChanged)
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                style = MaterialTheme.typography.titleMedium,
-                text = "Bahan Baku",
-                color = TextDefault
-            )
-
-            OutlinedTextField(
-                value = oil,
-                onValueChange = {
-                    val filtered = it.filter { char -> char.isDigit() }
-                    if (filtered.length <= 3) onOilChanged(filtered)
-                },
-                label = { Text(Ingredient.OIL.label) },
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = { Text("Botol (liter)") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = flour,
-                onValueChange = {
-                    val filtered = it.filter { char -> char.isDigit() }
-                    if (filtered.length <= 3) onFlourChanged(filtered)
-                },
-                label = { Text(Ingredient.FLOUR.label) },
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = { Text("Plastik (500 gr)") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-
-            Spacer(modifier = Modifier.height(80.dp)) // Add space above button
-        }
     }
+
 }
 
 private fun saveButtonClicked(
@@ -243,6 +312,7 @@ private fun CheckInScreenPreview() {
         flour = "",
         display = Flavor.entries.associateWith { 0 },
         raw = Flavor.entries.associateWith { 0 },
+        onNavigateBack = {},
         onOilChanged = {},
         onFlourChanged = {},
         onDisplayChanged = { _, _ -> },

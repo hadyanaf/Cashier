@@ -19,15 +19,14 @@ fun StatusLabel(status: Status, modifier: Modifier) {
 
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(bgColor)
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Text(
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.labelMedium,
             text = status.label,
-            color = textColor,
-            modifier = modifier
+            color = textColor
         )
     }
 }
