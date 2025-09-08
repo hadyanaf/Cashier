@@ -19,7 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.miredo.cashier.presentation.components.RoundedTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -103,16 +103,10 @@ fun SaleScreenContent(
     onEvent: (SaleViewModel.ViewEvent) -> Unit
 ) {
     GradientBackground {
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                TopAppBar(
-                    title = { 
-                        Text(
-                            "Rekap Penjualan",
-                            color = White
-                        ) 
-                    },
+        Box(modifier = modifier) {
+            Column {
+                RoundedTopAppBar(
+                    title = "Rekap Penjualan",
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
@@ -121,35 +115,12 @@ fun SaleScreenContent(
                                 tint = White
                             )
                         }
-                    },
-                    colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
-                        containerColor = BlueTertiary,
-                        titleContentColor = White,
-                        navigationIconContentColor = White
-                    )
+                    }
                 )
-            },
-            containerColor = androidx.compose.ui.graphics.Color.Transparent,
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { onEvent(SaleViewModel.ViewEvent.OnAddSaleClicked) },
-                    shape = MaterialTheme.shapes.extraLarge
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Tambah Penjualan"
-                    )
-                }
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(top = 16.dp, start = 20.dp, end = 20.dp)
-                    .fillMaxSize()
+                Column(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 20.dp, end = 20.dp)
+                        .fillMaxSize()
             ) {
                 if (state.sales.isEmpty()) {
                     Box(
@@ -199,7 +170,26 @@ fun SaleScreenContent(
                     onClick = { onEvent(SaleViewModel.ViewEvent.OnSaveAndContinueClicked) },
                     modifier = Modifier.padding(vertical = 16.dp)
                 )
+                }
             }
+            
+            FloatingActionButton(
+                onClick = { onEvent(SaleViewModel.ViewEvent.OnAddSaleClicked) },
+                shape = MaterialTheme.shapes.extraLarge,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Tambah Penjualan"
+                )
+            }
+            
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
 }

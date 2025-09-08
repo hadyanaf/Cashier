@@ -15,7 +15,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.miredo.cashier.presentation.components.RoundedTopAppBar
+import com.miredo.cashier.presentation.components.GradientBackground
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,55 +60,49 @@ fun HomeScreenContent(
     onItemClicked: (String) -> Unit = {},
     onSignOut: (() -> Unit)? = null
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = { 
-                    Text(
-                        "Dashboard Kasir",
-                        color = White
-                    ) 
-                },
-                actions = {
-                    if (onSignOut != null) {
-                        IconButton(onClick = onSignOut) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                                contentDescription = "Keluar",
-                                tint = White
-                            )
+    GradientBackground {
+        Box(modifier = modifier) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                item {
+                    RoundedTopAppBar(
+                        title = "Dashboard Kasir",
+                        actions = {
+                            if (onSignOut != null) {
+                                IconButton(onClick = onSignOut) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                        contentDescription = "Keluar",
+                                        tint = White
+                                    )
+                                }
+                            }
                         }
-                    }
-                },
-                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
-                    containerColor = BlueTertiary,
-                    titleContentColor = White,
-                    actionIconContentColor = White
-                )
-            )
-        },
-        floatingActionButton = {
+                    )
+                }
+                items(reports) { report ->
+                    ReportItem(
+                        date = report.date,
+                        status = report.status,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp, vertical = 8.dp)
+                            .clickable {
+                                onItemClicked(report.id)
+                            }
+                    )
+                }
+            }
+            
             FloatingActionButton(
                 onClick = { onAddClicked() },
-                shape = MaterialTheme.shapes.extraLarge
-            )
-            { Icon(Icons.Filled.Add, "Tambah") }
-        }) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(top = 16.dp, start = 20.dp, end = 20.dp)
-                .fillMaxWidth()
-        ) {
-
-            items(reports) { report ->
-                ReportItem(
-                    date = report.date,
-                    status = report.status,
-                    modifier = Modifier.clickable {
-                        onItemClicked(report.id)
-                    })
+                shape = MaterialTheme.shapes.extraLarge,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(Icons.Filled.Add, "Tambah")
             }
         }
     }

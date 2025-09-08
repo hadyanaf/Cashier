@@ -2,29 +2,22 @@ package com.miredo.cashier.presentation.screen.checkout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,7 +25,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,10 +36,12 @@ import com.miredo.cashier.data.model.Screen
 import com.miredo.cashier.presentation.animation.AnimationConstants
 import com.miredo.cashier.presentation.animation.FadeInAnimation
 import com.miredo.cashier.presentation.animation.SlideInAnimation
+import com.miredo.cashier.presentation.components.AdditionalItemsSection
 import com.miredo.cashier.presentation.components.CustomButton
 import com.miredo.cashier.presentation.components.CustomTextField
 import com.miredo.cashier.presentation.components.FlavorsInputRow
 import com.miredo.cashier.presentation.components.GradientBackground
+import com.miredo.cashier.presentation.components.RoundedTopAppBar
 import com.miredo.cashier.presentation.ui.theme.BlueTertiary
 import com.miredo.cashier.presentation.ui.theme.TextDefault
 import com.miredo.cashier.presentation.ui.theme.White
@@ -98,7 +92,6 @@ fun CheckoutScreen(
     }
 
     CheckoutScreenContent(
-        modifier = modifier,
         todayDate = todayDate,
         oil = oil,
         flour = flour,
@@ -143,7 +136,6 @@ fun CheckoutScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreenContent(
-    modifier: Modifier = Modifier,
     todayDate: String,
     oil: String,
     flour: String,
@@ -163,37 +155,21 @@ fun CheckoutScreenContent(
 ) {
 
     GradientBackground {
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                TopAppBar(
-                    title = { 
-                        Text(
-                            "Checkout",
-                            color = White
-                        ) 
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali",
-                                tint = White
-                            )
-                        }
-                    },
-                    colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
-                        containerColor = BlueTertiary,
-                        titleContentColor = White,
-                        navigationIconContentColor = White
-                    )
-                )
-            },
-            containerColor = androidx.compose.ui.graphics.Color.Transparent
-        ) { paddingValues ->
+        Column {
+            RoundedTopAppBar(
+                title = "Checkout",
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Kembali",
+                            tint = White
+                        )
+                    }
+                }
+            )
             Column(
                 modifier = Modifier
-                    .padding(paddingValues)
                     .padding(top = 16.dp, start = 20.dp, end = 20.dp)
                     .verticalScroll(rememberScrollState())
                     .fillMaxWidth(),
@@ -221,7 +197,7 @@ fun CheckoutScreenContent(
                             Text(
                                 style = MaterialTheme.typography.bodyLarge,
                                 text = todayDate,
-                                color = MaterialTheme.colorScheme.primary
+                                color = BlueTertiary
                             )
                         }
                     }
@@ -249,24 +225,32 @@ fun CheckoutScreenContent(
                             Text(
                                 style = MaterialTheme.typography.titleSmall,
                                 text = "Sisa display",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = TextDefault
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            FlavorsInputRow(modifier = Modifier, values = display, onValueChange = onDisplayChanged)
+                            FlavorsInputRow(
+                                modifier = Modifier,
+                                values = display,
+                                onValueChange = onDisplayChanged
+                            )
 
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Text(
                                 style = MaterialTheme.typography.titleSmall,
                                 text = "Mentah",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = TextDefault
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            FlavorsInputRow(modifier = Modifier, values = raw, onValueChange = onRawChanged)
+                            FlavorsInputRow(
+                                modifier = Modifier,
+                                values = raw,
+                                onValueChange = onRawChanged
+                            )
                         }
                     }
                 }
@@ -310,101 +294,15 @@ fun CheckoutScreenContent(
                     }
                 }
 
-                // Additional Items Card with animation
+                // Additional Items Section with animation
                 FadeInAnimation(visible = true, delayMillis = AnimationConstants.DELAY_LONG) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = White),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(20.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    style = MaterialTheme.typography.titleMedium,
-                                    text = "Lainnya",
-                                    color = TextDefault
-                                )
-
-                                OutlinedButton(
-                                    onClick = onAddOther
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Add,
-                                        contentDescription = "Tambah Item"
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Tambah")
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            if (others.isEmpty()) {
-                                Text(
-                                    text = "Belum ada item tambahan. Tap 'Tambah' untuk menambahkan item seperti Gas, dll.",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            } else {
-                                others.forEachIndexed { index, resource ->
-                                    Card(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(vertical = 4.dp),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.surface
-                                        ),
-                                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.padding(16.dp)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                CustomTextField(
-                                                    value = resource.name,
-                                                    onValueChange = { onOtherNameChanged(index, it) },
-                                                    label = "Nama Item",
-                                                    modifier = Modifier.weight(1f)
-                                                )
-
-                                                IconButton(
-                                                    onClick = { onRemoveOther(index) }
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Delete,
-                                                        contentDescription = "Hapus Item",
-                                                        tint = MaterialTheme.colorScheme.error
-                                                    )
-                                                }
-                                            }
-
-                                            Spacer(modifier = Modifier.height(8.dp))
-
-                                            CustomTextField(
-                                                value = resource.price,
-                                                onValueChange = {
-                                                    val filtered = it.filter { char -> char.isDigit() }
-                                                    if (filtered.length <= 8) onOtherPriceChanged(index, filtered)
-                                                },
-                                                label = "Harga (Rupiah)"
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    AdditionalItemsSection(
+                        items = others,
+                        onAddItem = onAddOther,
+                        onRemoveItem = onRemoveOther,
+                        onItemNameChanged = onOtherNameChanged,
+                        onItemPriceChanged = onOtherPriceChanged
+                    )
                 }
 
                 // Save Button with animation
@@ -447,7 +345,6 @@ private fun saveButtonClicked(
 @Composable
 private fun CheckoutScreenPreview() {
     CheckoutScreenContent(
-        modifier = Modifier,
         todayDate = "Selasa, 22 September 2025",
         oil = "",
         flour = "",

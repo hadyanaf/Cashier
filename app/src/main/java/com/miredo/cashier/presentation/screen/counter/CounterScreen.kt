@@ -1,6 +1,7 @@
 package com.miredo.cashier.presentation.screen.counter
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,11 +19,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,27 +32,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.miredo.cashier.data.enums.PaymentType
 import com.miredo.cashier.domain.model.MenuDetail
-import com.miredo.cashier.presentation.animation.AnimationConstants
 import com.miredo.cashier.presentation.animation.ExpandableAnimation
-import com.miredo.cashier.presentation.animation.FadeInAnimation
-import com.miredo.cashier.presentation.animation.SlideInAnimation
 import com.miredo.cashier.presentation.components.CurrencyTextField
 import com.miredo.cashier.presentation.components.CustomButton
 import com.miredo.cashier.presentation.components.GradientBackground
 import com.miredo.cashier.presentation.components.PaymentMethodSelector
+import com.miredo.cashier.presentation.components.RoundedTopAppBar
 import com.miredo.cashier.presentation.components.TextCounter
-import com.miredo.cashier.presentation.ui.theme.BlueTertiary
+import com.miredo.cashier.presentation.ui.theme.BluePrimary
 import com.miredo.cashier.presentation.ui.theme.TextDefault
 import com.miredo.cashier.presentation.ui.theme.White
-import com.miredo.cashier.util.CurrencyUtils
 import com.miredo.cashier.util.toRupiah
 
 @Composable
@@ -125,16 +119,10 @@ private fun CounterScreenContent(
     var cash by remember { mutableStateOf("") }
 
     GradientBackground {
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                TopAppBar(
-                    title = { 
-                        Text(
-                            "Kasir",
-                            color = White
-                        ) 
-                    },
+        Box(modifier = modifier) {
+            Column {
+                RoundedTopAppBar(
+                    title = "Pembelian",
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
@@ -143,181 +131,172 @@ private fun CounterScreenContent(
                                 tint = White
                             )
                         }
-                    },
-                    colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
-                        containerColor = BlueTertiary,
-                        titleContentColor = White,
-                        navigationIconContentColor = White
-                    )
-                )
-            },
-            containerColor = androidx.compose.ui.graphics.Color.Transparent,
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(top = 16.dp, start = 20.dp, end = 20.dp)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Menu Items Card
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
-                    ) {
-                        Text(
-                            text = "Pilih Menu",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = TextDefault
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        state.menuDetails.forEach { item ->
-                            TextCounter(
-                                title = item.title,
-                                price = item.price,
-                                count = item.count,
-                                onIncrement = {
-                                    event(
-                                        CounterViewModel.ViewEvent.OnCountChanged(
-                                            item.title,
-                                            item.count + 1
-                                        )
-                                    )
-                                },
-                                onDecrement = {
-                                    event(
-                                        CounterViewModel.ViewEvent.OnCountChanged(
-                                            item.title,
-                                            (item.count - 1).coerceAtLeast(0)
-                                        )
-                                    )
-                                },
-                                onCountChange = {
-                                    event(
-                                        CounterViewModel.ViewEvent.OnCountChanged(
-                                            item.title,
-                                            it
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                        }
                     }
-                }
-
-                // Payment Summary Card
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 20.dp, end = 20.dp)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
+                    // Menu Items Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier.padding(20.dp)
                         ) {
                             Text(
-                                text = "Total Bayar",
+                                text = "Pilih Menu",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = TextDefault
                             )
 
-                            Text(
-                                text = totalPaid,
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = "Metode Bayar",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        PaymentMethodSelector(
-                            modifier = Modifier.fillMaxWidth(),
-                            selectedMethod = selectedMethod,
-                            onMethodSelected = {
-                                if (it == PaymentType.CASH)
-                                    event(CounterViewModel.ViewEvent.OnCashClicked)
-                                else
-                                    event(CounterViewModel.ViewEvent.OnQrisClicked)
-                            })
-
-                        ExpandableAnimation(visible = selectedMethod == PaymentType.CASH) {
-                            Column {
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                CurrencyTextField(
-                                    value = cash,
-                                    onValueChange = { newValue ->
-                                        cash = newValue
+                            state.menuDetails.forEach { item ->
+                                TextCounter(
+                                    title = item.title,
+                                    price = item.price,
+                                    count = item.count,
+                                    onIncrement = {
                                         event(
-                                            CounterViewModel.ViewEvent.OnCashChanged(
-                                                newValue.toIntOrNull() ?: 0
+                                            CounterViewModel.ViewEvent.OnCountChanged(
+                                                item.title,
+                                                item.count + 1
                                             )
                                         )
                                     },
-                                    label = "Uang Tunai"
+                                    onDecrement = {
+                                        event(
+                                            CounterViewModel.ViewEvent.OnCountChanged(
+                                                item.title,
+                                                (item.count - 1).coerceAtLeast(0)
+                                            )
+                                        )
+                                    },
+                                    onCountChange = {
+                                        event(
+                                            CounterViewModel.ViewEvent.OnCountChanged(
+                                                item.title,
+                                                it
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Total Bayar",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = TextDefault
                                 )
 
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = totalPaid,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = BluePrimary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = "Kembalian",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    // Payment Summary Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp)
+                        ) {
+                            Text(
+                                text = "Metode Bayar",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = TextDefault
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            PaymentMethodSelector(
+                                modifier = Modifier.fillMaxWidth(),
+                                selectedMethod = selectedMethod,
+                                onMethodSelected = {
+                                    if (it == PaymentType.CASH)
+                                        event(CounterViewModel.ViewEvent.OnCashClicked)
+                                    else
+                                        event(CounterViewModel.ViewEvent.OnQrisClicked)
+                                })
+
+                            ExpandableAnimation(visible = selectedMethod == PaymentType.CASH) {
+                                Column {
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    CurrencyTextField(
+                                        value = cash,
+                                        onValueChange = { newValue ->
+                                            cash = newValue
+                                            event(
+                                                CounterViewModel.ViewEvent.OnCashChanged(
+                                                    newValue.toIntOrNull() ?: 0
+                                                )
+                                            )
+                                        },
+                                        label = "Uang Tunai"
                                     )
 
-                                    Text(
-                                        text = change,
-                                        style = MaterialTheme.typography.headlineSmall,
-                                        color = if (change.contains("-")) MaterialTheme.colorScheme.error
-                                        else MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = "Kembalian",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = TextDefault
+                                        )
+
+                                        Text(
+                                            text = change,
+                                            style = MaterialTheme.typography.headlineSmall,
+                                            color = if (change.contains("-")) MaterialTheme.colorScheme.error
+                                            else BluePrimary,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
+
+                    // Save Button
+                    CustomButton(
+                        text = if (state.isEditMode) "Perbarui & Selesai" else "Simpan & Selesai",
+                        onClick = { event(CounterViewModel.ViewEvent.OnSaveClicked) },
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
-
-                // Save Button
-                CustomButton(
-                    text = if (state.isEditMode) "Perbarui & Selesai" else "Simpan & Selesai",
-                    onClick = { event(CounterViewModel.ViewEvent.OnSaveClicked) },
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
+
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
 }
