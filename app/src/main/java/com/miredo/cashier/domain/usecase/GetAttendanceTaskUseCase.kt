@@ -9,6 +9,6 @@ class GetAttendanceTaskUseCase @Inject constructor(
     private val repository: Repository
 ) {
     suspend operator fun invoke(reportId: String): AttendanceTask? {
-        return repository.getReports().first().find { it.date == reportId }
+        return repository.getReports().first().find { it.id == reportId }
     }
 }

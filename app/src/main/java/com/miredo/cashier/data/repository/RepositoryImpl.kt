@@ -14,6 +14,8 @@ class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDat
 
     override fun getSales(reportId: String): Flow<List<Sale>> = remoteDataSource.getSales(reportId)
 
+    override suspend fun createReport(date: String): String = remoteDataSource.createReport(date)
+
     override suspend fun saveCheckInData(
         id: String,
         data: AttendanceTask

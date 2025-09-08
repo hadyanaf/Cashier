@@ -8,6 +8,7 @@ import com.miredo.cashier.data.enums.Ingredient
 import com.miredo.cashier.data.enums.Status
 import com.miredo.cashier.data.model.AttendanceTask
 import com.miredo.cashier.data.model.CheckData
+import com.miredo.cashier.domain.usecase.CreateReportUseCase
 import com.miredo.cashier.domain.usecase.InsertAttendanceTaskUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,8 +18,10 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class CheckInViewModel @Inject constructor(private val insertAttendanceTaskUseCase: InsertAttendanceTaskUseCase) :
-    ViewModel() {
+class CheckInViewModel @Inject constructor(
+    private val createReportUseCase: CreateReportUseCase,
+    private val insertAttendanceTaskUseCase: InsertAttendanceTaskUseCase
+) : ViewModel() {
     private val _effect = MutableSharedFlow<ViewEffect>()
     val effect = _effect.asSharedFlow()
 
@@ -31,6 +34,7 @@ class CheckInViewModel @Inject constructor(private val insertAttendanceTaskUseCa
     private fun onButtonSaveClicked(event: ViewEvent.OnButtonSaveClicked) {
         viewModelScope.launch {
             val date = LocalDate.now().toString()
+            
             val ingredients = hashMapOf(
                 Ingredient.OIL.name to (event.oil.toFloatOrNull() ?: 0f),
                 Ingredient.FLOUR.name to (event.flour.toFloatOrNull() ?: 0f)
@@ -44,6 +48,8 @@ class CheckInViewModel @Inject constructor(private val insertAttendanceTaskUseCa
             )
 
             val attendanceTask = AttendanceTask(
+                id = date, // Use date directly as ID
+                userId = "", // Will be set by the use case
                 date = date,
                 checkIn = checkData,
                 checkOut = null,
@@ -51,7 +57,7 @@ class CheckInViewModel @Inject constructor(private val insertAttendanceTaskUseCa
             )
 
             insertAttendanceTaskUseCase(
-                date = date,
+                reportId = date, // Use date as report ID
                 task = attendanceTask
             )
 

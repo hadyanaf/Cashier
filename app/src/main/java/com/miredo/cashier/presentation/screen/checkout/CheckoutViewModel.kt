@@ -56,14 +56,18 @@ class CheckoutViewModel @Inject constructor(
                 )
                 
                 // Update attendance task with checkout data
-                val updatedTask = (existingTask ?: AttendanceTask(date = event.reportId)).copy(
+                val updatedTask = (existingTask ?: AttendanceTask(
+                    id = event.reportId,
+                    date = event.reportId, // reportId is the date
+                    userId = "" // Will be set by the use case
+                )).copy(
                     checkOut = checkOutData,
                     status = Status.CHECKED_OUT
                 )
                 
                 // Save updated task
                 insertAttendanceTaskUseCase(
-                    date = event.reportId,
+                    reportId = event.reportId,
                     task = updatedTask
                 )
                 

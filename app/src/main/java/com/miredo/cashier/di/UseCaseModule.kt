@@ -2,6 +2,7 @@ package com.miredo.cashier.di
 
 import com.miredo.cashier.domain.repository.AuthRepository
 import com.miredo.cashier.domain.repository.Repository
+import com.miredo.cashier.domain.usecase.CreateReportUseCase
 import com.miredo.cashier.domain.usecase.DeleteSaleUseCase
 import com.miredo.cashier.domain.usecase.GetAttendanceReportsUseCase
 import com.miredo.cashier.domain.usecase.GetAuthStateUseCase
@@ -27,6 +28,11 @@ object UseCaseModule {
     @Singleton
     fun provideGetAttendanceReportsUseCase(repository: Repository): GetAttendanceReportsUseCase =
         GetAttendanceReportsUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideCreateReportUseCase(repository: Repository): CreateReportUseCase =
+        CreateReportUseCase(repository)
 
     @Provides
     @Singleton

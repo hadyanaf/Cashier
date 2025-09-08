@@ -24,8 +24,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(firestore: FirebaseFirestore): RemoteDataSource =
-        RemoteDataSourceImpl(firestore)
+    fun provideRemoteDataSource(
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): RemoteDataSource = RemoteDataSourceImpl(firestore, auth)
 
     @Provides
     @Singleton
