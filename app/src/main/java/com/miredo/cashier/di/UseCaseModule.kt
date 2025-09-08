@@ -12,7 +12,6 @@ import com.miredo.cashier.domain.usecase.InsertSaleUseCase
 import com.miredo.cashier.domain.usecase.SendPasswordResetEmailUseCase
 import com.miredo.cashier.domain.usecase.SignInUseCase
 import com.miredo.cashier.domain.usecase.SignOutUseCase
-import com.miredo.cashier.domain.usecase.SignUpUseCase
 import com.miredo.cashier.domain.usecase.UpdateSaleUseCase
 import dagger.Module
 import dagger.Provides
@@ -65,10 +64,6 @@ object UseCaseModule {
     fun provideSignInUseCase(authRepository: AuthRepository): SignInUseCase =
         SignInUseCase(authRepository)
 
-    @Provides
-    @Singleton
-    fun provideSignUpUseCase(authRepository: AuthRepository): SignUpUseCase =
-        SignUpUseCase(authRepository)
 
     @Provides
     @Singleton

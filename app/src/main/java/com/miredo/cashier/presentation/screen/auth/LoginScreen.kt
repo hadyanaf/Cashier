@@ -28,7 +28,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -69,8 +68,6 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
-    var isSignUp by remember { mutableStateOf(false) }
-    var confirmPassword by remember { mutableStateOf("") }
     
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -99,15 +96,10 @@ fun LoginScreen(
         onEmailChange = { email = it },
         password = password,
         onPasswordChange = { password = it },
-        confirmPassword = confirmPassword,
-        onConfirmPasswordChange = { confirmPassword = it },
         rememberMe = rememberMe,
         onRememberMeChange = { rememberMe = it },
-        isSignUp = isSignUp,
-        onToggleSignUp = { isSignUp = it },
         isLoading = isLoading,
         onLoginClick = { viewModel.signIn(email, password) },
-        onSignUpClick = { viewModel.signUp(email, password, confirmPassword) },
         onForgotPasswordClick = { viewModel.sendPasswordResetEmail(email) },
         snackbarHostState = snackbarHostState
     )
@@ -120,15 +112,10 @@ fun LoginScreenContent(
     onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
-    confirmPassword: String = "",
-    onConfirmPasswordChange: (String) -> Unit = {},
     rememberMe: Boolean,
     onRememberMeChange: (Boolean) -> Unit,
-    isSignUp: Boolean,
-    onToggleSignUp: (Boolean) -> Unit,
     isLoading: Boolean,
     onLoginClick: () -> Unit,
-    onSignUpClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
@@ -148,32 +135,6 @@ fun LoginScreenContent(
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Logo and App Name
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "App Logo",
-                        modifier = Modifier.size(80.dp),
-                        tint = BluePrimary
-                    )
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    Text(
-                        text = "Kasir",
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = BluePrimary
-                    )
-                    
-                    Text(
-                        text = "Kelola bisnis Anda dengan mudah",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = GrayText,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(48.dp))
-
                     // Login Card
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -185,10 +146,10 @@ fun LoginScreenContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(24.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = if (isSignUp) "Buat Akun" else "Selamat Datang",
+                                text = "Selamat Datang",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = BluePrimary,
@@ -197,14 +158,13 @@ fun LoginScreenContent(
                             )
 
                             Text(
-                                text = if (isSignUp) "Daftar untuk memulai" else "Masuk ke akun Anda",
+                                text = "Masuk ke akun Anda",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = GrayText,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth()
                             )
 
-                            Spacer(modifier = Modifier.height(8.dp))
 
                             // Email Field
                             CustomTextField(
@@ -222,83 +182,48 @@ fun LoginScreenContent(
                                 isPassword = true
                             )
 
-                            // Confirm Password Field (for Sign Up)
-                            if (isSignUp) {
-                                CustomTextField(
-                                    value = confirmPassword,
-                                    onValueChange = onConfirmPasswordChange,
-                                    label = "Konfirmasi Kata Sandi",
-                                    isPassword = true
-                                )
-                            }
-
-                            if (!isSignUp) {
-                                // Remember Me and Forgot Password
+                            // Remember Me and Forgot Password
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Checkbox(
-                                            checked = rememberMe,
-                                            onCheckedChange = onRememberMeChange,
-                                            colors = CheckboxDefaults.colors(
-                                                checkedColor = BluePrimary,
-                                                uncheckedColor = GrayText
-                                            )
+                                    Checkbox(
+                                        checked = rememberMe,
+                                        onCheckedChange = onRememberMeChange,
+                                        colors = CheckboxDefaults.colors(
+                                            checkedColor = BluePrimary,
+                                            uncheckedColor = GrayText
                                         )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(
-                                            text = "Ingat saya",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = GrayText
-                                        )
-                                    }
-
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = "Lupa Kata Sandi?",
+                                        text = "Ingat saya",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = BluePrimary,
-                                        fontWeight = FontWeight.Medium,
-                                        modifier = Modifier.clickable { onForgotPasswordClick() }
+                                        color = GrayText
                                     )
                                 }
+
+                                Text(
+                                    text = "Lupa Kata Sandi?",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = BluePrimary,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier.clickable { onForgotPasswordClick() }
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))
 
                             // Action Button
                             CustomButton(
-                                text = if (isSignUp) "Buat Akun" else "Masuk",
-                                onClick = if (isSignUp) onSignUpClick else onLoginClick,
+                                text = "Masuk",
+                                onClick = onLoginClick,
                                 isLoading = isLoading
                             )
-
-                            // Toggle Sign Up/Login
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = if (isSignUp) "Sudah punya akun? " else "Belum punya akun? ",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = GrayText
-                                )
-                                TextButton(
-                                    onClick = { onToggleSignUp(!isSignUp) }
-                                ) {
-                                    Text(
-                                        text = if (isSignUp) "Masuk" else "Daftar",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = BluePrimary,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                            }
                         }
                     }
                 }
@@ -318,11 +243,8 @@ private fun LoginScreenPreview() {
             onPasswordChange = {},
             rememberMe = false,
             onRememberMeChange = {},
-            isSignUp = false,
-            onToggleSignUp = {},
             isLoading = false,
             onLoginClick = {},
-            onSignUpClick = {},
             onForgotPasswordClick = {},
             snackbarHostState = remember { SnackbarHostState() }
         )

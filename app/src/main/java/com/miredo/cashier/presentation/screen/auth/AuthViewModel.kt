@@ -8,7 +8,6 @@ import com.miredo.cashier.domain.usecase.GetAuthStateUseCase
 import com.miredo.cashier.domain.usecase.SendPasswordResetEmailUseCase
 import com.miredo.cashier.domain.usecase.SignInUseCase
 import com.miredo.cashier.domain.usecase.SignOutUseCase
-import com.miredo.cashier.domain.usecase.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val getAuthStateUseCase: GetAuthStateUseCase,
     private val signInUseCase: SignInUseCase,
-    private val signUpUseCase: SignUpUseCase,
     private val signOutUseCase: SignOutUseCase,
     private val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase
 ) : ViewModel() {
@@ -72,35 +70,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signUp(email: String, password: String, confirmPassword: String) {
-        if (!isValidEmail(email)) {
-            _errorMessage.value = "Masukkan alamat email yang valid"
-            return
-        }
-        
-        if (password.isBlank() || password.length < 6) {
-            _errorMessage.value = "Kata sandi harus minimal 6 karakter"
-            return
-        }
-        
-        if (password != confirmPassword) {
-            _errorMessage.value = "Kata sandi tidak cocok"
-            return
-        }
-
-        viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-            
-            val result = signUpUseCase(email, password)
-            
-            _isLoading.value = false
-            
-            if (!result.isSuccess) {
-                _errorMessage.value = result.errorMessage
-            }
-        }
-    }
 
     fun signOut() {
         viewModelScope.launch {

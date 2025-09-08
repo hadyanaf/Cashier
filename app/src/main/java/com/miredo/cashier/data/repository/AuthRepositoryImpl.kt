@@ -49,19 +49,6 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signUp(email: String, password: String): AuthResult {
-        return try {
-            val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            val user = result.user?.toUser()
-            if (user != null) {
-                AuthResult(isSuccess = true, user = user)
-            } else {
-                AuthResult(isSuccess = false, errorMessage = "Failed to create user")
-            }
-        } catch (e: Exception) {
-            AuthResult(isSuccess = false, errorMessage = e.message ?: "Sign up failed")
-        }
-    }
 
     override suspend fun signOut(): Result<Unit> {
         return try {

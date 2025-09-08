@@ -15,6 +15,7 @@ data class Sale(
 ) {
     fun toDomain() = SaleDomain(
         id = id.orEmpty(),
+        createdAt = createdAt,
         paymentType = paymentType,
         items = items,
         totalPrice = totalPrice,
